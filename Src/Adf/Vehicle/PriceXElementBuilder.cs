@@ -1,7 +1,6 @@
-﻿using AutoLead.Vehicle;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
-namespace AutoLead
+namespace AutoLead.Vehicle
 {
 	public class PriceXElementBuilder : IPriceXElementBuilder
 	{
