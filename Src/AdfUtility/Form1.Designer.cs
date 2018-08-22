@@ -1,9 +1,15 @@
-﻿using Adf.Vehicle.Enum;
-using AutoLead;
-using AutoLead.Lead;
+﻿using AutoLead;
+using AutoLead.Contact;
+using AutoLead.Contact.Enum;
+using AutoLead.Customer;
+using AutoLead.Email;
+using AutoLead.Name;
+using AutoLead.Name.Enum;
+using AutoLead.Phone;
 using AutoLead.Prospect;
+using AutoLead.Provider;
 using AutoLead.Vehicle;
-using AutoLead.Vehicle.Enum;
+using AutoLead.Vendor;
 using System.Collections.Generic;
 
 namespace AdfUtility
@@ -58,13 +64,92 @@ namespace AdfUtility
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
+			var contact = new AdfContact
+			{
+				Address = new ContactAddress
+				{
+					StreetLines = new List<string>
+					{
+						"1234 test ave",
+						"po box 12345"
+					},
+					Apartment = "2",
+					City = "Test City",
+					Country = "US",
+					RegionCode = "NY",
+					PostalCode = "12345",
+					Type = ContactAddressType.Home
+				},
+				Email = new AdfEmail
+				{
+					Value = "test@testadf.com",
+					PreferredContact = true
+				},
+				Names = new List<AdfName>
+							{
+								new AdfName
+								{
+									NamePart = NamePart.Full,
+									Value = "John Doe",
+									Type = NameType.Individual
+								}
+							},
+				PhoneNumbers = new List<AdfPhone>
+							{
+								new AdfPhone
+								{
+									PreferredContact = true,
+									Value = "321-123-4567",
+								}
+							}
+			};
+
 			var leads = new List<AdfLead>
 			{
 				new AdfLead
 				{
-					Customer = new AdfCustomer(),
+					Customer = new AdfCustomer
+					{
+						Contact = contact,
+						/*Timeframe = new Timeframe
+						{
+							Description = "time and stuff",
+							EarliestDate = DateTime.Now.AddDays(1),
+							LatestDate = DateTime.Now.AddMonths(1),
+						},*/
+						/*Ids = new List<AdfId>
+						{
+							new AdfId
+							{
+								Id = "123456",
+								Source = "Autonation"
+							},
+							new AdfId
+							{
+								Id = "1234567",
+								Source = "Cobalt"
+							}
+						},
+						Comments = "hi there!"*/
+					},
 					Prospect = new AdfProspect
 					{
+						/*Ids = new List<AdfId>
+						{
+							new AdfId
+							{
+								Id = "123456",
+								Source = "Autonation"
+							},
+							new AdfId
+							{
+								Id = "1234567",
+								Source = "Cobalt"
+							}
+						},*/
+						RequestDate = System.DateTime.Now
+					},
+					Provider = new AdfProvider {
 						Ids = new List<AdfId>
 						{
 							new AdfId
@@ -78,10 +163,29 @@ namespace AdfUtility
 								Source = "Cobalt"
 							}
 						},
-						RequestDate = System.DateTime.Now,
-						Status = AdfProspectStatus.New
+						Email = new AdfEmail
+						{
+							Value = "test@testadf.com",
+							PreferredContact = true
+						},
+						Names = new List<AdfName>
+						{
+							new AdfName
+							{
+								NamePart = NamePart.Full,
+								Value = "John Doe",
+								Type = NameType.Individual
+							}
+						},
+						Phone = new AdfPhone
+							{
+								PreferredContact = true,
+								Value = "321-123-4567",
+							},
+						Service = "milk",
+						Url = "www.testadf.com",
+						Contact = contact
 					},
-					Provider = new AdfProvider(),
 					Vehicles = new List<AdfVehicle>
 					{
 						new AdfVehicle
@@ -89,7 +193,7 @@ namespace AdfUtility
 							Year = "1999",
 							Make = "Honda",
 							Model = "Civic",
-							Trim = "Ex",
+							/*Trim = "Ex",
 							Transmission = "Automatic",
 							BodyStyle = "Coupe",
 							ColorCombinations = new List<ColorCombination>
@@ -180,10 +284,27 @@ namespace AdfUtility
 									Weighting = 20
 								}
 							},
-							Status = VehicleStatus.Used
+							Status = VehicleStatus.Used*/
 						}
 					},
-					Vendor = new AdfVendor()
+					Vendor = new AdfVendor {
+						Ids = new List<AdfId>
+						{
+							new AdfId
+							{
+								Id = "123456",
+								Source = "Autonation"
+							},
+							new AdfId
+							{
+								Id = "1234567",
+								Source = "Cobalt"
+							}
+						},
+						VendorName = "123Ford",
+						Url = "test@adftest.com",
+						Contact = contact
+					}
 				}
 			};		
 

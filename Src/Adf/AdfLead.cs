@@ -1,8 +1,11 @@
-﻿using AutoLead.Prospect;
+﻿using AutoLead.Customer;
+using AutoLead.Prospect;
+using AutoLead.Provider;
 using AutoLead.Vehicle;
+using AutoLead.Vendor;
 using System.Collections.Generic;
 
-namespace AutoLead.Lead
+namespace AutoLead
 {
 	public class AdfLead
 	{

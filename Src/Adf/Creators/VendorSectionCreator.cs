@@ -1,5 +1,7 @@
-﻿using AutoLead.Creators.Interface;
-using AutoLead.Lead;
+﻿using AutoLead.Contact;
+using AutoLead.Creators.Interface;
+using AutoLead.Vendor;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace AutoLead.Creators
@@ -8,14 +10,17 @@ namespace AutoLead.Creators
 	{
 		#region Constructors
 
-		public VendorSectionCreator(IIdXElementBuilder idXElementBuilder)
+		public VendorSectionCreator(IIdXElementBuilder idXElementBuilder, IContactXElementBuilder contactXElementBuilder)
 		{
 			IdXElementBuilder = idXElementBuilder;
+			ContactXElementBuilder = contactXElementBuilder;
 		}
 
 		#endregion
 
 		#region Properties
+
+		private IContactXElementBuilder ContactXElementBuilder { get; set; }
 
 		private IIdXElementBuilder IdXElementBuilder { get; }
 
@@ -23,10 +28,34 @@ namespace AutoLead.Creators
 
 		#region Methods
 
-		public XElement CreateVendorSection(AdfVendor customer)
+		public XElement CreateVendorSection(AdfVendor vendor)
 		{
-			var prospectNode = new XElement("vendor");
-			return prospectNode;
+			var vendorElement = new XElement("vendor");
+
+			var idElements = GetIdElements(vendor.Ids, IdXElementBuilder);
+			if (idElements.Any())
+			{
+				vendorElement.Add(idElements);
+			}
+
+			if (string.IsNullOrEmpty(vendor.VendorName))
+			{
+				throw new AdfException("Vendor name is required for vendor.");
+			}
+
+			vendorElement.Add(new XElement("vendorname", vendor.VendorName));
+
+			if (!string.IsNullOrEmpty(vendor.Url))
+			{
+				vendorElement.Add(new XElement("url", vendor.Url));
+			}
+
+			if (vendor.Contact != null)
+			{
+				vendorElement.Add(ContactXElementBuilder.BuildContactElement(vendor.Contact));
+			}
+
+			return vendorElement;
 		}
 
 		#endregion

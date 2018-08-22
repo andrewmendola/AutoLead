@@ -35,7 +35,6 @@ namespace AutoLead.Creators
 			vehicleElement.Add(new XAttribute("interest", vehicle.Interest.ToString().ToLower()));
 			vehicleElement.Add(new XAttribute("status", vehicle.Status.ToString().ToLower()));
 
-			// TODO: Id
 			var idElements = GetIdElements(vehicle.Ids, IdXElementBuilder);
 			if (idElements.Any())
 			{

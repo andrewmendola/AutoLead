@@ -1,7 +1,7 @@
-﻿namespace AutoLead.Vehicle
-{
-	using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
+namespace AutoLead.Vehicle
+{
 	#region Interfaces
 
 	public interface IPriceXElementBuilder

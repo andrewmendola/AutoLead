@@ -1,5 +1,4 @@
-﻿using Adf.Vehicle.Enum;
-using AutoLead.Vehicle.Enum;
+﻿using AutoLead.Vehicle.Enum;
 
 namespace AutoLead.Vehicle
 {

@@ -1,4 +1,4 @@
-﻿namespace Adf.Vehicle.Enum
+﻿namespace AutoLead.Vehicle.Enum
 {
 	#region Enums
 

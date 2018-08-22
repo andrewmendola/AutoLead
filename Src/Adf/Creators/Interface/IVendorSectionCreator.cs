@@ -1,4 +1,4 @@
-﻿using AutoLead.Lead;
+﻿using AutoLead.Vendor;
 using System.Xml.Linq;
 
 namespace AutoLead.Creators.Interface

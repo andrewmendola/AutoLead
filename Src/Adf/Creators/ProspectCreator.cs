@@ -10,7 +10,7 @@ namespace AutoLead.Creators
 	{
 		#region Constructors
 
-		public ProspectCreator(IRequestDateStringFormatter requestDateStringFormatter, IIdXElementBuilder idXElementBuilder)
+		public ProspectCreator(IDateStringFormatter requestDateStringFormatter, IIdXElementBuilder idXElementBuilder)
 		{
 			RequestDateStringFormatter = requestDateStringFormatter;
 			IdXElementBuilder = idXElementBuilder;
@@ -22,34 +22,34 @@ namespace AutoLead.Creators
 
 		private IIdXElementBuilder IdXElementBuilder { get; }
 
-		private IRequestDateStringFormatter RequestDateStringFormatter { get; }
+		private IDateStringFormatter RequestDateStringFormatter { get; }
 
 		#endregion
 
 		#region Methods
 
 		public XElement CreateProspect(
-			AdfProspect adfProspect,
+			AdfProspect prospect,
 			AdfDocumentBuilderSettings adfDocumentBuilderSettings)
 		{
-			var prospectNode = new XElement("prospect", new XAttribute("status", adfProspect.Status.ToString().ToLower()));
+			var prospectElement = new XElement("prospect", new XAttribute("status", prospect.Status.ToString().ToLower()));
 
-			var idElements = GetIdElements(adfProspect.Ids, IdXElementBuilder);
+			var idElements = GetIdElements(prospect.Ids, IdXElementBuilder);
 			if (idElements.Any())
 			{
-				prospectNode.Add(idElements);
+				prospectElement.Add(idElements);
 			}
 
-			prospectNode.Add(GetProspectRequestDateNode(adfProspect.RequestDate ?? DateTime.Now.ToUniversalTime()));
+			prospectElement.Add(GetProspectRequestDateNode(prospect.RequestDate ?? DateTime.Now.ToUniversalTime()));
 
-			return prospectNode;
+			return prospectElement;
 		}
 
 		private XElement GetProspectRequestDateNode(DateTime requestDate)
 		{
 			var prospectRequestDateNode = new XElement(
 				"requestdate",
-				RequestDateStringFormatter.GetRequestDate(requestDate));
+				RequestDateStringFormatter.GetFormattedDate(requestDate));
 
 			return prospectRequestDateNode;
 		}
