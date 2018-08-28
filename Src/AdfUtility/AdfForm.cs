@@ -261,9 +261,7 @@ namespace AdfUtility
 				}
 			};
 
-			var builder = new AdfDocumentBuilder(leads);
-
-			AdfTextBox.Text = builder.AdfXDocument.ToString();
+			AdfTextBox.Text = new AdfDocumentBuilder().BuildAdfDocument(leads).ToString();
 		}
 	}
 }

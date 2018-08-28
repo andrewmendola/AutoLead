@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace AutoLead.Builders
 {
-	public class ProspectElementBuilder : BaseSectionElementBuilder, IProspectElementBuilder
+	public class ProspectElementBuilder : BaseElementBuilder, IProspectElementBuilder
 	{
 		#region Constructors
 
@@ -28,9 +28,7 @@ namespace AutoLead.Builders
 
 		#region Methods
 
-		public XElement BuildProspectElement(
-			Prospect prospect,
-			AdfDocumentBuilderSettings adfDocumentBuilderSettings)
+		public XElement BuildProspectElement(Prospect prospect)
 		{
 			var prospectElement = new XElement("prospect", new XAttribute("status", prospect.Status.ToString().ToLower()));
 

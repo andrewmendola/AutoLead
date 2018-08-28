@@ -7,16 +7,16 @@ namespace AutoLead.Builders
 	{
 		#region Methods
 
-		public XDocument BuildRootDocument(AdfDocumentBuilderSettings adfDocumentBuilderSettings)
+		public XDocument BuildRootDocument(bool includeXmlDeclaration = true, bool includeAdfDeclaration = true)
 		{
 			var adfDocument = new XDocument();
 
-			if (adfDocumentBuilderSettings.IncludeXmlDeclaration)
+			if (includeXmlDeclaration)
 			{
 				adfDocument.Declaration = new XDeclaration("1.0", string.Empty, string.Empty);
 			}
 
-			if (adfDocumentBuilderSettings.IncludeAdfDeclaration)
+			if (includeAdfDeclaration)
 			{
 				adfDocument.Add(new XProcessingInstruction("adf", "version=\"1.0\""));
 			}

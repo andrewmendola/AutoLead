@@ -5,15 +5,17 @@ using System.Xml.Linq;
 
 namespace AutoLead.Builders
 {
-	public class CustomerSectionElementBuilder : BaseSectionElementBuilder, ICustomerElementBuilder
+	public class CustomerElementBuilder : BaseElementBuilder, ICustomerElementBuilder
 	{
 		#region Constructors
 
-		public CustomerSectionElementBuilder(IDateStringFormatter dateStringFormatter, IIdElementBuilder idXElementBuilder, IContactElementBuilder contactXElementBuilder)
+		public CustomerElementBuilder(IDateStringFormatter dateStringFormatter,
+			IIdElementBuilder idXElementBuilder,
+			IContactElementBuilder contactXElementBuilder)
 		{
+			DateStringFormatter = dateStringFormatter;
 			IdXElementBuilder = idXElementBuilder;
 			ContactXElementBuilder = contactXElementBuilder;
-			DateStringFormatter = dateStringFormatter;
 		}
 
 		#endregion

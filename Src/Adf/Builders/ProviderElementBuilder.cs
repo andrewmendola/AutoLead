@@ -5,11 +5,11 @@ using System.Xml.Linq;
 
 namespace AutoLead.Builders
 {
-	public class ProviderSectionElementBuilder : BaseSectionElementBuilder, IProviderElementBuilder
+	public class ProviderElementBuilder : BaseElementBuilder, IProviderElementBuilder
 	{
 		#region Constructors
 
-		public ProviderSectionElementBuilder(
+		public ProviderElementBuilder(
 			IIdElementBuilder idXElementBuilder,
 			INameElementBuilder nameXElementBuilder,
 			IContactElementBuilder contactXElementBuilder,

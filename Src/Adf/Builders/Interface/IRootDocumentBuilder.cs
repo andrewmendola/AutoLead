@@ -8,7 +8,7 @@ namespace AutoLead.Builders.Interface
 	{
 		#region Methods
 
-		XDocument BuildRootDocument(AdfDocumentBuilderSettings adfDocumentBuilderSettings);
+		XDocument BuildRootDocument(bool includeXmlDeclaration, bool includeAdfDeclaration);
 
 		#endregion
 	}

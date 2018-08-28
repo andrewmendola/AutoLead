@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace AutoLead.Builders
 {
-	public abstract class BaseSectionElementBuilder
+	public abstract class BaseElementBuilder
 	{
 		#region Methods
 

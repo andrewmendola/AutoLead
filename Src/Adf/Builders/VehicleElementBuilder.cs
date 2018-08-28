@@ -5,11 +5,11 @@ using System.Xml.Linq;
 
 namespace AutoLead.Builders
 {
-	public class VehicleSectionElementBuilder : BaseSectionElementBuilder, IVehicleElementBuilder
+	public class VehicleElementBuilder : BaseElementBuilder, IVehicleElementBuilder
 	{
 		#region Constructors
 
-		public VehicleSectionElementBuilder(IPriceElementBuilder priceXElementBuilder, IIdElementBuilder idXElementBuilder)
+		public VehicleElementBuilder(IPriceElementBuilder priceXElementBuilder, IIdElementBuilder idXElementBuilder)
 		{
 			PriceXElementBuilder = priceXElementBuilder;
 			IdXElementBuilder = idXElementBuilder;
@@ -29,11 +29,9 @@ namespace AutoLead.Builders
 
 		public XElement BuildVehicleElement(Vehicle vehicle, int sequence)
 		{
-			var vehicleElement = new XElement("vehicle");
-
-			// Vehicle attributes
-			vehicleElement.Add(new XAttribute("interest", vehicle.Interest.ToString().ToLower()));
-			vehicleElement.Add(new XAttribute("status", vehicle.Status.ToString().ToLower()));
+			var vehicleElement = new XElement("vehicle",
+				new XAttribute("interest", vehicle.Interest.ToString().ToLower()),
+				new XAttribute("status", vehicle.Status.ToString().ToLower()));
 
 			var idElements = GetIdElements(vehicle.Ids, IdXElementBuilder);
 			if (idElements.Any())

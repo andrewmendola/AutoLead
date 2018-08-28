@@ -2,54 +2,108 @@
 using AutoLead.Builders.Interface;
 using AutoLead.Data;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace AutoLead
 {
-	public class AdfDocumentBuilder : BaseAdfDocumentBuilder
+	public class AdfDocumentBuilder : IAdfDocumentBuilder
 	{
-		#region Constructors
+		#region Methods
 
-		public AdfDocumentBuilder(List<AdfLead> adfLeads)
+		public XDocument BuildAdfDocument(List<AdfLead> adfLeads, AdfDocumentBuilderSettings adfDocumentBuilderSettings = null)
 		{
-			AdfLeads = adfLeads;
-			DateStringFormatter = new DateStringFormatter();
-			EmailXElementBuilder = new EmailElementBuilder();
-			IdXElementBuilder = new IdElementBuilder();
-			NameXElementBuilder = new NameElementBuilder();
-			PhoneXElementBuilder = new PhoneElementBuilder();
-			ContactXElementBuilder = new ContactElementBuilder(NameXElementBuilder, EmailXElementBuilder, PhoneXElementBuilder);
+			if (adfDocumentBuilderSettings == null)
+			{
+				adfDocumentBuilderSettings = new AdfDocumentBuilderSettings();
+			}
+
+			SetDefaultSettings(adfDocumentBuilderSettings);
+
+			var adfDocument =
+				adfDocumentBuilderSettings.RootDocumentBuilder.BuildRootDocument(
+					adfDocumentBuilderSettings.IncludeXmlDeclaration,
+					adfDocumentBuilderSettings.IncludeAdfDeclaration);
+
+			var adfRootNode = new XElement("adf");
+			adfDocument.Add(adfRootNode);
+
+			foreach (var adfLead in adfLeads)
+			{
+				var vehicleNodes = GetVehicleNodes(adfLead.Vehicles, adfDocumentBuilderSettings);
+				var customerNode = adfDocumentBuilderSettings.CustomerElementBuilder.BuildCustomerElement(adfLead.Customer);
+				var vendorNode = adfDocumentBuilderSettings.VendorElementBuilder.BuildVendorElement(adfLead.Vendor);
+				var providorNode = adfDocumentBuilderSettings.ProviderElementBuilder.BuildProviderElement(adfLead.Provider);
+				var prospectNode = adfDocumentBuilderSettings.ProspectElementBuilder.BuildProspectElement(adfLead.Prospect);
+
+				prospectNode.Add(vehicleNodes);
+				prospectNode.Add(customerNode);
+				prospectNode.Add(vendorNode);
+				prospectNode.Add(providorNode);
+
+				adfRootNode.Add(prospectNode);
+			}
+
+			return adfDocument;
 		}
 
-		#endregion
+		private List<XElement> GetVehicleNodes(ICollection<Vehicle> adfVehicles, AdfDocumentBuilderSettings adfDocumentBuilderSettings)
+		{
+			var vehicleNodes = new List<XElement>();
+			var vehicleSequence = 0;
+			foreach (var vehicle in adfVehicles)
+			{
+				vehicleSequence++;
+				vehicleNodes.Add(adfDocumentBuilderSettings.VehicleElementBuilder.BuildVehicleElement(vehicle, vehicleSequence));
+			}
 
-		#region Properties
+			return vehicleNodes;
+		}
 
-		protected override IReadOnlyCollection<AdfLead> AdfLeads { get; }
+		private void SetDefaultSettings(AdfDocumentBuilderSettings adfDocumentBuilderSettings)
+		{
+			adfDocumentBuilderSettings.DateStringFormatter = adfDocumentBuilderSettings.DateStringFormatter ?? new DateStringFormatter();
+			adfDocumentBuilderSettings.EmailElementBuilder = adfDocumentBuilderSettings.EmailElementBuilder ?? new EmailElementBuilder();
+			adfDocumentBuilderSettings.IdElementBuilder = adfDocumentBuilderSettings.IdElementBuilder ?? new IdElementBuilder();
+			adfDocumentBuilderSettings.NameElementBuilder = adfDocumentBuilderSettings.NameElementBuilder ?? new NameElementBuilder();
+			adfDocumentBuilderSettings.PhoneElementBuilder = adfDocumentBuilderSettings.PhoneElementBuilder ?? new PhoneElementBuilder();
+			adfDocumentBuilderSettings.PriceElementBuilder = adfDocumentBuilderSettings.PriceElementBuilder ?? new PriceElementBuilder();
+			adfDocumentBuilderSettings.RootDocumentBuilder = adfDocumentBuilderSettings.RootDocumentBuilder ?? new RootDocumentBuilder();
 
-		protected override ICustomerElementBuilder CustomerSectionCreator => new CustomerSectionElementBuilder(DateStringFormatter, IdXElementBuilder, ContactXElementBuilder);
+			adfDocumentBuilderSettings.ContactElementBuilder = adfDocumentBuilderSettings.ContactElementBuilder
+				?? new ContactElementBuilder(
+					adfDocumentBuilderSettings.NameElementBuilder,
+					adfDocumentBuilderSettings.EmailElementBuilder,
+					adfDocumentBuilderSettings.PhoneElementBuilder);
 
-		protected override IProspectElementBuilder ProspectCreator => new ProspectElementBuilder(DateStringFormatter, IdXElementBuilder);
+			adfDocumentBuilderSettings.ProspectElementBuilder = adfDocumentBuilderSettings.ProspectElementBuilder
+				?? new ProspectElementBuilder(
+					adfDocumentBuilderSettings.DateStringFormatter,
+					adfDocumentBuilderSettings.IdElementBuilder);
 
-		protected override IProviderElementBuilder ProviderSectionCreator =>
-			new ProviderSectionElementBuilder(IdXElementBuilder, NameXElementBuilder, ContactXElementBuilder, EmailXElementBuilder, PhoneXElementBuilder);
+			adfDocumentBuilderSettings.CustomerElementBuilder = adfDocumentBuilderSettings.CustomerElementBuilder
+				?? new CustomerElementBuilder(
+					adfDocumentBuilderSettings.DateStringFormatter,
+					adfDocumentBuilderSettings.IdElementBuilder,
+					adfDocumentBuilderSettings.ContactElementBuilder);
 
-		protected override IVehicleElementBuilder VehicleSectionCreator => new VehicleSectionElementBuilder(new PriceElementBuilder(), IdXElementBuilder);
+			adfDocumentBuilderSettings.ProviderElementBuilder = adfDocumentBuilderSettings.ProviderElementBuilder
+				?? new ProviderElementBuilder(
+					adfDocumentBuilderSettings.IdElementBuilder,
+					adfDocumentBuilderSettings.NameElementBuilder,
+					adfDocumentBuilderSettings.ContactElementBuilder,
+					adfDocumentBuilderSettings.EmailElementBuilder,
+					adfDocumentBuilderSettings.PhoneElementBuilder);
 
-		protected override IVendorElementBuilder VendorSectionCreator => new VendorSectionElementBuilder(IdXElementBuilder, ContactXElementBuilder);
+			adfDocumentBuilderSettings.VehicleElementBuilder = adfDocumentBuilderSettings.VehicleElementBuilder
+				?? new VehicleElementBuilder(
+					adfDocumentBuilderSettings.PriceElementBuilder,
+					adfDocumentBuilderSettings.IdElementBuilder);
 
-		protected override IRootDocumentBuilder XmlDocumentCreator => new RootDocumentBuilder();
-
-		private IContactElementBuilder ContactXElementBuilder { get; }
-
-		private IDateStringFormatter DateStringFormatter { get; }
-
-		private IEmailElementBuilder EmailXElementBuilder { get; }
-
-		private IIdElementBuilder IdXElementBuilder { get; }
-
-		private INameElementBuilder NameXElementBuilder { get; }
-
-		private IPhoneElementBuilder PhoneXElementBuilder { get; }
+			adfDocumentBuilderSettings.VendorElementBuilder = adfDocumentBuilderSettings.VendorElementBuilder
+				?? new VendorElementBuilder(
+					adfDocumentBuilderSettings.IdElementBuilder,
+					adfDocumentBuilderSettings.ContactElementBuilder);
+		}
 
 		#endregion
 	}

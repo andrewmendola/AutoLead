@@ -9,7 +9,7 @@ namespace AutoLead.Builders.Interface
 	{
 		#region Methods
 
-		XElement BuildProspectElement(Prospect adfProspect, AdfDocumentBuilderSettings adfDocumentBuilderSettings);
+		XElement BuildProspectElement(Prospect adfProspect);
 
 		#endregion
 	}
